@@ -34,7 +34,24 @@ const App = () => {
     };
 
     if (personsNames.includes(personObject.name.toLowerCase().trim())) {
-      alert(`${personObject.name} is already added to phonebook`);
+      const confirm = window.confirm(
+        `${personObject.name} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (confirm) {
+        const person = persons.find((p) => p.name === personObject.name);
+        const changedPerson = { ...person, number: personObject.number };
+
+        personService
+          .update(changedPerson, changedPerson.id)
+          .then((updatedPerson) => {
+            setPersons(
+              persons.map((p) =>
+                p.id !== changedPerson.id ? p : updatedPerson
+              )
+            );
+          });
+      }
     } else {
       personService.create(personObject).then((createdPerson) => {
         setPersons(persons.concat(createdPerson));
