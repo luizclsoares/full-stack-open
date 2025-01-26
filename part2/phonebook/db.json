@@ -19,21 +19,6 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
-    },
-    {
-      "id": "0316",
-      "name": "John Doe",
-      "number": "00-123456789"
-    },
-    {
-      "id": "e178",
-      "name": "Jane Doe",
-      "number": "00-987654321"
-    },
-    {
-      "id": "d706",
-      "name": "Linus Torvalds",
-      "number": "100-1234567890"
     }
   ]
 }
