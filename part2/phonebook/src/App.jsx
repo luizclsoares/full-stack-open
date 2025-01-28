@@ -63,6 +63,19 @@ const App = () => {
               setNotificationMessage(null);
               setNotificationClass(null);
             }, 5000);
+          })
+          .catch((error) => {
+            setPersons(persons.filter((p) => p.name !== personObject.name));
+
+            setNotificationMessage(
+              `Information of ${personObject.name} has already been removed from server`
+            );
+            setNotificationClass("error");
+
+            setTimeout(() => {
+              setNotificationMessage(null);
+              setNotificationClass(null);
+            }, 5000);
           });
       }
     } else {
