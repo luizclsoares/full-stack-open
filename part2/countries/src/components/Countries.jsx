@@ -1,4 +1,4 @@
-const Countries = ({ countries, filter }) => {
+const Countries = ({ countries, filter, handleClick }) => {
   if (!filter) {
     return null;
   }
@@ -16,7 +16,12 @@ const Countries = ({ countries, filter }) => {
     return (
       <>
         {filteredCountries.map((country) => (
-          <div key={country.name.common}>{country.name.common}</div>
+          <div key={country.name.common}>
+            {country.name.common}{" "}
+            <button onClick={() => handleClick(country.name.common)}>
+              show
+            </button>
+          </div>
         ))}
       </>
     );

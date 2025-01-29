@@ -20,7 +20,11 @@ const App = () => {
   return (
     <div>
       <Find filter={filter} handleChange={handleFilterChange} />
-      <Countries countries={countries} filter={filter} />
+      <Countries
+        countries={countries}
+        filter={filter}
+        handleClick={setFilter}
+      />
     </div>
   );
 };
