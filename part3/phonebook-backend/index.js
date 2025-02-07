@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const Person = require("./models/person");
+require("dotenv").config();
 
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -38,7 +40,9 @@ const generateId = () => {
 };
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then((savedPersons) => {
+    res.json(savedPersons);
+  });
 });
 
 app.get("/info", (req, res) => {
