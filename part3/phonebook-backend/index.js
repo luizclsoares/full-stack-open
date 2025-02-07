@@ -40,8 +40,8 @@ const generateId = () => {
 };
 
 app.get("/api/persons", (req, res) => {
-  Person.find({}).then((savedPersons) => {
-    res.json(savedPersons);
+  Person.find({}).then((persons) => {
+    res.json(persons);
   });
 });
 
@@ -74,23 +74,18 @@ app.delete("/api/persons/:id", (req, res) => {
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
-  const names = persons.map((person) => person.name);
-
   if (!body.name || !body.number) {
     return res.status(400).json({ error: "Name or number missing" });
-  } else if (names.includes(body.name)) {
-    return res.status(400).json({ error: "Name must be unique" });
   }
 
-  const person = {
-    id: generateId(),
+  const person = new Person({
     name: body.name,
     number: body.number,
-  };
+  });
 
-  persons = persons.concat(person);
-
-  res.json(person);
+  person.save().then((savedPerson) => {
+    res.json(savedPerson);
+  });
 });
 
 const PORT = process.env.PORT || 3001;
