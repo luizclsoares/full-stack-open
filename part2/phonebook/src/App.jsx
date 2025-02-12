@@ -79,17 +79,28 @@ const App = () => {
           });
       }
     } else {
-      personService.create(personObject).then((createdPerson) => {
-        setPersons(persons.concat(createdPerson));
+      personService
+        .create(personObject)
+        .then((createdPerson) => {
+          setPersons(persons.concat(createdPerson));
 
-        setNotificationMessage(`Added ${createdPerson.name}`);
-        setNotificationClass("success");
+          setNotificationMessage(`Added ${createdPerson.name}`);
+          setNotificationClass("success");
 
-        setTimeout(() => {
-          setNotificationMessage(null);
-          setNotificationClass(null);
-        }, 5000);
-      });
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setNotificationClass(null);
+          }, 5000);
+        })
+        .catch((err) => {
+          setNotificationMessage(err.response.data.error);
+          setNotificationClass("error");
+
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setNotificationClass(null);
+          }, 5000);
+        });
     }
 
     setNewName("");
