@@ -43,7 +43,7 @@ test("HTTP POST request to the /api/blogs URL successfully creates a new blog po
     title: "Random title",
     author: "Random author",
     url: "http://www.randomurl.com",
-    likes: 0,
+    likes: 100,
   };
 
   await api.post("/api/blogs").send(blog).expect(201);
@@ -53,6 +53,22 @@ test("HTTP POST request to the /api/blogs URL successfully creates a new blog po
 
   assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
   assert(titles.includes(blog.title));
+});
+
+test("if the likes property is missing from the request, it will default to the value 0", async () => {
+  const blog = {
+    title: "Random title",
+    author: "Random author",
+    url: "http://www.randomurl.com",
+  };
+
+  await api.post("/api/blogs").send(blog).expect(201);
+
+  const response = await api.get("/api/blogs");
+  assert.strictEqual(response.body.length, helper.initialBlogs.length + 1);
+
+  const lastBlog = response.body[response.body.length - 1];
+  assert.strictEqual(lastBlog.likes, 0);
 });
 
 after(async () => {
