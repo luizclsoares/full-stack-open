@@ -71,6 +71,26 @@ test("if the likes property is missing from the request, it will default to the 
   assert.strictEqual(lastBlog.likes, 0);
 });
 
+test("if the title is missing, the backend responds to the request with the status code 400", async () => {
+  const blog = {
+    author: "Random author",
+    url: "http://www.randomurl.com",
+    likes: 100,
+  };
+
+  await api.post("/api/blogs").send(blog).expect(400);
+});
+
+test("if the url is missing, the backend responds to the request with the status code 400", async () => {
+  const blog = {
+    title: "Random title",
+    author: "Random author",
+    likes: 100,
+  };
+
+  await api.post("/api/blogs").send(blog).expect(400);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
