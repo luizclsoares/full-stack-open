@@ -29,6 +29,15 @@ test("blog list application returns the correct amount of blog posts", async () 
   assert.strictEqual(response.body.length, helper.initialBlogs.length);
 });
 
+test("unique identifier property of the blog posts is named id", async () => {
+  const response = await api.get("/api/blogs");
+
+  const keys = Object.keys(response.body[0]);
+
+  assert(keys.includes("id"));
+  assert(!keys.includes("_id"));
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
