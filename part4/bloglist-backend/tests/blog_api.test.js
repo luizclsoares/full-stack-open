@@ -103,6 +103,21 @@ test("delete a single blog post resource", async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length - 1);
 });
 
+test("update the information of an individual blog post", async () => {
+  let response = await api.get("/api/blogs");
+
+  const firstBlog = response.body[0];
+
+  const firstCopy = { ...firstBlog };
+  firstCopy.likes += 1;
+
+  await api.put(`/api/blogs/${firstBlog.id}`).send(firstCopy).expect(200);
+
+  response = await api.get("/api/blogs");
+
+  assert.strictEqual(response.body[0].likes, firstBlog.likes + 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
