@@ -91,6 +91,18 @@ test("if the url is missing, the backend responds to the request with the status
   await api.post("/api/blogs").send(blog).expect(400);
 });
 
+test("delete a single blog post resource", async () => {
+  let response = await api.get("/api/blogs");
+
+  const firstBlog = response.body[0];
+
+  await api.delete(`/api/blogs/${firstBlog.id}`).expect(204);
+
+  response = await api.get("/api/blogs");
+
+  assert.strictEqual(response.body.length, helper.initialBlogs.length - 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
