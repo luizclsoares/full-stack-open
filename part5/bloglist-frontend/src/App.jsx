@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
+import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -9,6 +10,9 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -18,7 +22,10 @@ const App = () => {
     const userJSON = window.localStorage.getItem("loggedBlogAppUser");
 
     if (userJSON) {
-      setUser(JSON.parse(userJSON));
+      const user = JSON.parse(userJSON);
+
+      setUser(user.token);
+      blogService.setToken(user.token);
     }
   }, []);
 
@@ -29,6 +36,7 @@ const App = () => {
       const user = await loginService.login({ username, password });
 
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
+      blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");
@@ -42,6 +50,21 @@ const App = () => {
     setUser(null);
   };
 
+  const addBlog = async (e) => {
+    e.preventDefault();
+
+    try {
+      const newUser = await blogService.create({ title, author, url });
+
+      setBlogs(blogs.concat(newUser));
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+    } catch (exception) {
+      console.log("error");
+    }
+  };
+
   return (
     <div>
       {user === null ? (
@@ -53,7 +76,31 @@ const App = () => {
           handlePassword={setPassword}
         />
       ) : (
-        <BlogList blogs={blogs} name={user.name} handleLogout={handleLogout} />
+        <div>
+          <h2>Blogs</h2>
+          <p>
+            {user.name} logged in{" "}
+            <button type="submit" onClick={handleLogout}>
+              Logout
+            </button>
+          </p>
+
+          <BlogForm
+            addBlog={addBlog}
+            title={title}
+            handleTitle={setTitle}
+            author={author}
+            handleAuthor={setAuthor}
+            url={url}
+            handleUrl={setUrl}
+          />
+
+          <BlogList
+            blogs={blogs}
+            name={user.name}
+            handleLogout={handleLogout}
+          />
+        </div>
       )}
     </div>
   );
