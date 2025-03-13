@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
+import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -13,6 +14,8 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [message, setMessage] = useState("");
+  const [className, setClasseName] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -41,7 +44,13 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      console.log("error");
+      setMessage("Wrong username or password");
+      setClasseName("error");
+
+      setTimeout(() => {
+        setMessage("");
+        setClasseName("");
+      }, 5000);
     }
   };
 
@@ -54,9 +63,18 @@ const App = () => {
     e.preventDefault();
 
     try {
-      const newUser = await blogService.create({ title, author, url });
+      const newBlog = await blogService.create({ title, author, url });
 
-      setBlogs(blogs.concat(newUser));
+      setBlogs(blogs.concat(newBlog));
+
+      setMessage(`A new blog ${newBlog.title} by ${newBlog.author} added.`);
+      setClasseName("success");
+
+      setTimeout(() => {
+        setMessage("");
+        setClasseName("");
+      }, 5000);
+
       setTitle("");
       setAuthor("");
       setUrl("");
@@ -67,6 +85,10 @@ const App = () => {
 
   return (
     <div>
+      {user === null ? <h2>Log in to application</h2> : <h2>Blogs</h2>}
+
+      <Notification message={message} className={className} />
+
       {user === null ? (
         <LoginForm
           handleLogin={handleLogin}
@@ -77,9 +99,8 @@ const App = () => {
         />
       ) : (
         <div>
-          <h2>Blogs</h2>
           <p>
-            {user.name} logged in{" "}
+            {user.name} logged in
             <button type="submit" onClick={handleLogout}>
               Logout
             </button>
