@@ -89,6 +89,22 @@ const App = () => {
     }
   };
 
+  const deleteBlog = async (blog) => {
+    const confirm = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author} ?`
+    );
+
+    if (confirm) {
+      try {
+        await blogService.remove(blog.id);
+
+        setBlogs(blogs.filter((b) => b.id !== blog.id));
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+  };
+
   const blogFormRef = useRef();
 
   return (
@@ -118,7 +134,11 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
 
-          <BlogList blogs={blogs} updateBlog={updateBlog} />
+          <BlogList
+            blogs={blogs}
+            updateBlog={updateBlog}
+            deleteBlog={deleteBlog}
+          />
         </div>
       )}
     </div>
