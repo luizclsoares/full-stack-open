@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -63,6 +64,8 @@ const App = () => {
     e.preventDefault();
 
     try {
+      blogFormRef.current.toggleVisibility();
+
       const newBlog = await blogService.create({ title, author, url });
 
       setBlogs(blogs.concat(newBlog));
@@ -82,6 +85,8 @@ const App = () => {
       console.log("error");
     }
   };
+
+  const blogFormRef = useRef();
 
   return (
     <div>
@@ -106,15 +111,17 @@ const App = () => {
             </button>
           </p>
 
-          <BlogForm
-            addBlog={addBlog}
-            title={title}
-            handleTitle={setTitle}
-            author={author}
-            handleAuthor={setAuthor}
-            url={url}
-            handleUrl={setUrl}
-          />
+          <Togglable buttonLabel="New note" ref={blogFormRef}>
+            <BlogForm
+              addBlog={addBlog}
+              title={title}
+              handleTitle={setTitle}
+              author={author}
+              handleAuthor={setAuthor}
+              url={url}
+              handleUrl={setUrl}
+            />
+          </Togglable>
 
           <BlogList
             blogs={blogs}
