@@ -77,6 +77,16 @@ const App = () => {
     }
   };
 
+  const updateBlog = async (blog) => {
+    try {
+      const updatedBlog = await blogService.update(blog);
+
+      setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)));
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   const blogFormRef = useRef();
 
   return (
@@ -106,11 +116,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
 
-          <BlogList
-            blogs={blogs}
-            name={user.name}
-            handleLogout={handleLogout}
-          />
+          <BlogList blogs={blogs} updateBlog={updateBlog} />
         </div>
       )}
     </div>

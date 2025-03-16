@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLikes }) => {
   const [infoVisibility, setInfoVisibility] = useState(false);
 
   const blogStyle = {
@@ -12,6 +12,13 @@ const Blog = ({ blog }) => {
   };
 
   const visibility = { display: infoVisibility ? "" : "none" };
+
+  const updateBlog = () => {
+    const copyBlog = { ...blog };
+    copyBlog.likes += 1;
+
+    handleLikes(copyBlog);
+  };
 
   return (
     <div style={blogStyle}>
@@ -25,7 +32,7 @@ const Blog = ({ blog }) => {
       <div style={visibility}>
         <div>{blog.url}</div>
         <div>
-          Likes {blog.likes} <button>Like</button>
+          Likes {blog.likes} <button onClick={updateBlog}>Like</button>
         </div>
         <div>{blog.author}</div>
       </div>
