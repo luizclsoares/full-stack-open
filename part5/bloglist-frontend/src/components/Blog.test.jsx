@@ -48,3 +48,30 @@ test("the blog's URL and number of likes are shown when the button controlling t
 
   expect(secondaryInfo).toHaveStyle("display: block");
 });
+
+test("if the like button is clicked twice, the event handler the component received as props is called twice", async () => {
+  const blog = {
+    title: "Random title",
+    author: "Random author",
+    url: "www.random-url.com",
+  };
+
+  const handleLikes = vi.fn();
+  const handleRemove = vi.fn();
+
+  render(
+    <Blog blog={blog} handleLikes={handleLikes} handleRemove={handleRemove} />
+  );
+
+  const user = userEvent.setup();
+  const button = screen.getByText("view");
+
+  await user.click(button);
+
+  const likeButton = screen.getByText("Like");
+
+  await user.click(likeButton);
+  await user.click(likeButton);
+
+  expect(handleLikes.mock.calls).toHaveLength(2);
+});
