@@ -26,14 +26,14 @@ const Blog = ({ blog, handleLikes, handleRemove }) => {
 
   return (
     <div style={blogStyle}>
-      <div>
+      <div id="main-info">
         {blog.title} {blog.author}
         <button onClick={() => setInfoVisibility(!infoVisibility)}>
           {infoVisibility ? "hide" : "view"}
         </button>
       </div>
 
-      <div style={visibility}>
+      <div style={visibility} id="secondary-info">
         <div>{blog.url}</div>
         <div>
           Likes {blog.likes} <button onClick={updateBlog}>Like</button>
