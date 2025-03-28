@@ -55,5 +55,22 @@ describe("Blog app", () => {
       await page.getByRole("button", { name: "Create" }).click();
       await expect(page.getByText("Random title Random author")).toBeVisible();
     });
+
+    describe("and a blog exists", () => {
+      beforeEach(async ({ page }) => {
+        await page.getByRole("button", { name: "New blog" }).click();
+        await page.getByTestId("title").fill("Random title");
+        await page.getByTestId("author").fill("Random author");
+        await page.getByTestId("url").fill("www.random-url.com");
+        await page.getByRole("button", { name: "Create" }).click();
+      });
+
+      test("a blog can be liked", async ({ page }) => {
+        await page.getByRole("button", { name: "view" }).click();
+        await page.getByRole("button", { name: "Like" }).click();
+
+        await expect(page.getByText("Likes 1")).toBeVisible();
+      });
+    });
   });
 });
