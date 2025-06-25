@@ -7,4 +7,11 @@ const getAll = async () => {
   return response.data;
 };
 
-export default { getAll };
+const createAnecdote = async (content) => {
+  const anecdote = { content, votes: 0 };
+
+  const response = await axios.post(url, anecdote);
+  return response.data;
+};
+
+export default { getAll, createAnecdote };
