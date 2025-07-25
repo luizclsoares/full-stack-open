@@ -137,6 +137,14 @@ const CreateNew = (props) => {
     }, 5000);
   };
 
+  const resetValues = (e) => {
+    e.preventDefault();
+
+    content.reset();
+    author.reset();
+    info.reset();
+  };
+
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -154,6 +162,7 @@ const CreateNew = (props) => {
           <input {...info} />
         </div>
         <button>create</button>
+        <button onClick={resetValues}>reset</button>
       </form>
     </div>
   );
