@@ -3,7 +3,6 @@ import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { Link, Routes, Route, useMatch } from "react-router-dom";
@@ -69,13 +68,12 @@ const App = () => {
   };
 
   const addBlog = async (blog) => {
-    blogFormRef.current.toggleVisibility();
-
     try {
       const newBlog = await blogService.create(blog);
+      newBlog.user = user;
 
       setBlogs(blogs.concat(newBlog));
-
+      navigate("/");
       setMessage(`A new blog ${newBlog.title} by ${newBlog.author} added.`);
       setClasseName("success");
 
@@ -107,7 +105,7 @@ const App = () => {
     if (confirm) {
       try {
         await blogService.remove(blog.id);
-
+        navigate("/");
         setBlogs(blogs.filter((b) => b.id !== blog.id));
       } catch (err) {
         console.log(err.message);
@@ -132,11 +130,18 @@ const App = () => {
             Login
           </Link>
         ) : (
-          <Link style={padding}>
-            <button onClick={handleLogout}>Logout</button>
-          </Link>
+          <>
+            <Link style={padding} to="/create">
+              New blog
+            </Link>
+            <Link style={padding}>
+              <button onClick={handleLogout}>Logout</button>
+            </Link>
+          </>
         )}
       </div>
+
+      <Notification message={message} className={className} />
 
       <Routes>
         <Route
@@ -173,9 +178,9 @@ const App = () => {
             />
           }
         />
-      </Routes>
 
-      <Notification message={message} className={className} />
+        <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+      </Routes>
     </div>
   );
 };

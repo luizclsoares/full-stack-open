@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-
 const Blog = ({ blog, handleLikes, handleRemove }) => {
   const updateBlog = () => {
     const copyBlog = { ...blog };
