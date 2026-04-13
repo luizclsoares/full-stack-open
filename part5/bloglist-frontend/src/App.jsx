@@ -6,8 +6,9 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import { Link, Routes, Route } from "react-router-dom";
+import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Blog from "./components/Blog";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -18,6 +19,9 @@ const App = () => {
   const [className, setClasseName] = useState("");
 
   const navigate = useNavigate();
+
+  const match = useMatch("/blogs/:id");
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -155,6 +159,17 @@ const App = () => {
               handleUsername={setUsername}
               password={password}
               handlePassword={setPassword}
+            />
+          }
+        />
+
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog
+              blog={blog}
+              handleLikes={updateBlog}
+              handleRemove={deleteBlog}
             />
           }
         />
