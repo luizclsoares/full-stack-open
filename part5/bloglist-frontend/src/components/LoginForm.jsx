@@ -9,6 +9,7 @@ const LoginForm = ({
 }) => {
   return (
     <>
+      <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
           Username{" "}

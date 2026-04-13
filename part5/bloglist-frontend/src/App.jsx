@@ -6,6 +6,8 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { Link, Routes, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,6 +16,8 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
   const [className, setClasseName] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -26,8 +30,7 @@ const App = () => {
 
     if (userJSON) {
       const user = JSON.parse(userJSON);
-
-      setUser(user.token);
+      setUser(user);
       blogService.setToken(user.token);
     }
   }, []);
@@ -40,6 +43,7 @@ const App = () => {
 
       window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
       blogService.setToken(user.token);
+      navigate("/");
       setUser(user);
       setUsername("");
       setPassword("");
@@ -57,6 +61,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogAppUser");
     setUser(null);
+    navigate("/");
   };
 
   const addBlog = async (blog) => {
@@ -82,6 +87,7 @@ const App = () => {
   const updateBlog = async (blog) => {
     try {
       const updatedBlog = await blogService.update(blog);
+      updatedBlog.user = blog.user;
 
       setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)));
     } catch (err) {
@@ -91,7 +97,7 @@ const App = () => {
 
   const deleteBlog = async (blog) => {
     const confirm = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author} ?`
+      `Remove blog ${blog.title} by ${blog.author} ?`,
     );
 
     if (confirm) {
@@ -107,40 +113,54 @@ const App = () => {
 
   const blogFormRef = useRef();
 
+  const padding = {
+    padding: 5,
+  };
+
   return (
     <div>
-      {user === null ? <h2>Log in to application</h2> : <h2>Blogs</h2>}
+      <div>
+        <Link style={padding} to="/">
+          Blogs
+        </Link>
+        {!user ? (
+          <Link style={padding} to="/login">
+            Login
+          </Link>
+        ) : (
+          <Link style={padding}>
+            <button onClick={handleLogout}>Logout</button>
+          </Link>
+        )}
+      </div>
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <BlogList
+              blogs={blogs}
+              updateBlog={updateBlog}
+              deleteBlog={deleteBlog}
+            />
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
+            <LoginForm
+              handleLogin={handleLogin}
+              username={username}
+              handleUsername={setUsername}
+              password={password}
+              handlePassword={setPassword}
+            />
+          }
+        />
+      </Routes>
 
       <Notification message={message} className={className} />
-
-      {user === null ? (
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          handleUsername={setUsername}
-          password={password}
-          handlePassword={setPassword}
-        />
-      ) : (
-        <div>
-          <p>
-            {user.name} logged in
-            <button type="submit" onClick={handleLogout}>
-              Logout
-            </button>
-          </p>
-
-          <Togglable buttonLabel="New blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-
-          <BlogList
-            blogs={blogs}
-            updateBlog={updateBlog}
-            deleteBlog={deleteBlog}
-          />
-        </div>
-      )}
     </div>
   );
 };
