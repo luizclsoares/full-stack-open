@@ -1,3 +1,13 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Button,
+} from "@mui/material";
+
 const Blog = ({ blog, handleLikes, handleRemove }) => {
   const updateBlog = () => {
     const copyBlog = { ...blog };
@@ -15,21 +25,49 @@ const Blog = ({ blog, handleLikes, handleRemove }) => {
   }
 
   return (
-    <div>
-      <div id="secondary-info">
-        <h2>
-          {blog.author}:{blog.title}
-        </h2>
-        <div>
-          <a href={blog.url}>{blog.url}</a>
-        </div>
-        <div>
-          Likes {blog.likes} <button onClick={updateBlog}>Like</button>
-        </div>
-        <div>Added by {blog.user.name}</div>
-        <button onClick={removeBlog}>Remove</button>
-      </div>
-    </div>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell>
+              <h2>{blog.title}</h2>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <p>by {blog.author}</p>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <a href={blog.url}>{blog.url}</a>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <div>Added by {blog.user.name}</div>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <div>
+                <span style={{ marginRight: "8px" }}>Likes {blog.likes}</span>
+                <Button
+                  variant="outlined"
+                  onClick={updateBlog}
+                  style={{ marginRight: "8px" }}
+                >
+                  Like
+                </Button>
+                <Button variant="outlined" onClick={removeBlog} color="error">
+                  Remove
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 export default Blog;
