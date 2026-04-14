@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
@@ -8,15 +8,21 @@ import loginService from "./services/login";
 import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
-import { Container } from "@mui/material";
+import {
+  Container,
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  Typography,
+} from "@mui/material";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
-  const [className, setClasseName] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const navigate = useNavigate();
 
@@ -52,12 +58,9 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setMessage("Wrong username or password");
-      setClasseName("error");
-
+      setNotification({ text: "Wrong username or password", type: "error" });
       setTimeout(() => {
-        setMessage("");
-        setClasseName("");
+        setNotification(null);
       }, 5000);
     }
   };
@@ -75,12 +78,13 @@ const App = () => {
 
       setBlogs(blogs.concat(newBlog));
       navigate("/");
-      setMessage(`A new blog ${newBlog.title} by ${newBlog.author} added.`);
-      setClasseName("success");
+      setNotification({
+        text: `A new blog ${newBlog.title} by ${newBlog.author} added.`,
+        type: "success",
+      });
 
       setTimeout(() => {
-        setMessage("");
-        setClasseName("");
+        setNotification(null);
       }, 5000);
     } catch (exception) {
       console.log("error");
@@ -114,35 +118,50 @@ const App = () => {
     }
   };
 
-  const blogFormRef = useRef();
-
-  const padding = {
-    padding: 5,
-  };
+  const style = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
 
   return (
     <Container>
-      <div>
-        <Link style={padding} to="/">
-          Blogs
-        </Link>
-        {!user ? (
-          <Link style={padding} to="/login">
-            Login
-          </Link>
-        ) : (
-          <>
-            <Link style={padding} to="/create">
-              New blog
-            </Link>
-            <Link style={padding}>
-              <button onClick={handleLogout}>Logout</button>
-            </Link>
-          </>
-        )}
-      </div>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Blog App
+            </Typography>
 
-      <Notification message={message} className={className} />
+            <Button color="inherit" component={Link} to="/" sx={style}>
+              Blogs
+            </Button>
+
+            {!user ? (
+              <Button color="inherit" component={Link} to="/login" sx={style}>
+                Login
+              </Button>
+            ) : (
+              <>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/create"
+                  sx={style}
+                >
+                  New Blog
+                </Button>
+
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Box>
+
+      <Notification notification={notification} />
 
       <Routes>
         <Route
