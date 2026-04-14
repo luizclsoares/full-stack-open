@@ -8,6 +8,7 @@ import loginService from "./services/login";
 import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
+import { Container } from "@mui/material";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -120,7 +121,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <Container>
       <div>
         <Link style={padding} to="/">
           Blogs
@@ -181,7 +182,7 @@ const App = () => {
 
         <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
       </Routes>
-    </div>
+    </Container>
   );
 };
 
