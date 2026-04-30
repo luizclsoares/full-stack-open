@@ -5,7 +5,7 @@ import {
 } from "../store";
 
 const AnecdoteList = () => {
-  const anecdotes = useAnecdotes().toSorted((a, b) => b.votes - a.votes);
+  const anecdotes = useAnecdotes();
   const { vote, remove } = useAnecdoteActions();
   const { notification } = useNotificationActions();
 

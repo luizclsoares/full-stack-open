@@ -58,7 +58,9 @@ const useNotificationStore = create((set) => ({
 export default useAnecdoteStore;
 
 export const useAnecdotes = () => {
-  const anecdotes = useAnecdoteStore((state) => state.anecdotes);
+  const anecdotes = useAnecdoteStore((state) => state.anecdotes).toSorted(
+    (a, b) => b.votes - a.votes,
+  );
   const filter = useAnecdoteStore((state) => state.filter);
 
   return !filter
