@@ -4,6 +4,7 @@ import { renderHook, act } from "@testing-library/react";
 vi.mock("./services/anecdotes", () => ({
   default: {
     getAll: vi.fn(),
+    update: vi.fn(),
   },
 }));
 
@@ -64,6 +65,24 @@ describe("useAnecdoteActions", () => {
 
     const { result: anecdotesResult } = renderHook(() => useAnecdotes());
     expect(anecdotesResult.current).toEqual(sortedAnecdotes);
+  });
+
+  it("verifies that voting increases the number of votes for an anecdote", async () => {
+    const anecdote = { id: 1, content: "Random anecdote", votes: 0 };
+    useAnecdoteStore.setState({ anecdotes: [anecdote] });
+    anecdoteService.update.mockResolvedValue({
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    });
+
+    const { result } = renderHook(() => useAnecdoteActions());
+
+    await act(async () => {
+      await result.current.vote(1);
+    });
+
+    const { result: anecdotesResult } = renderHook(() => useAnecdotes());
+    expect(anecdotesResult.current[0].votes).toBe(1);
   });
 });
 
