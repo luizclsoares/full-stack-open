@@ -55,6 +55,8 @@ const useNotificationStore = create((set) => ({
   },
 }));
 
+export default useAnecdoteStore;
+
 export const useAnecdotes = () => {
   const anecdotes = useAnecdoteStore((state) => state.anecdotes);
   const filter = useAnecdoteStore((state) => state.filter);
