@@ -1,12 +1,11 @@
-import { useContext } from "react";
 import AnecdoteForm from "./components/AnecdoteForm";
 import Notification from "./components/Notification";
 import { useAnecdotes } from "./hooks/useAnecdotes";
-import NotificationContext from "./NotificationContext";
+import useNotify from "./hooks/useNotify";
 
 const App = () => {
   const { anecdotes, isPending, isError, updateAnecdote } = useAnecdotes();
-  const { setNotification } = useContext(NotificationContext);
+  const { setNotification } = useNotify();
 
   const handleVote = (anecdote) => {
     updateAnecdote(anecdote);

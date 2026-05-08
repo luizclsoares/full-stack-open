@@ -5,13 +5,12 @@ import {
   updateAnecdote,
 } from "../services/anecdotes";
 
-import { useContext } from "react";
-import NotificationContext from "../NotificationContext";
+import useNotify from "./useNotify";
 
 export const useAnecdotes = () => {
   const queryClient = useQueryClient();
 
-  const { setNotification } = useContext(NotificationContext);
+  const { setNotification } = useNotify();
 
   const result = useQuery({
     queryKey: ["anecdotes"],
