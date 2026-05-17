@@ -16,9 +16,20 @@ const useAnecdotes = () => {
     setAnecdotes(anecdotes.concat(newAnecdote));
   };
 
+  const deleteAnecdote = async (anecdote) => {
+    const confirm = window.confirm(`Delete anecdote ${anecdote.content} ?`);
+
+    if (confirm) {
+      await anecdotesService.deleteAnecdote(anecdote.id);
+
+      setAnecdotes(anecdotes.filter((a) => a.id !== anecdote.id));
+    }
+  };
+
   return {
     anecdotes,
     addAnecdote,
+    deleteAnecdote,
   };
 };
 
