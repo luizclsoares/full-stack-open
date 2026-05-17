@@ -10,8 +10,15 @@ const useAnecdotes = () => {
       .then((initialAnecdotes) => setAnecdotes(initialAnecdotes));
   }, []);
 
+  const addAnecdote = async (anecdote) => {
+    const newAnecdote = await anecdotesService.createNew(anecdote);
+
+    setAnecdotes(anecdotes.concat(newAnecdote));
+  };
+
   return {
     anecdotes,
+    addAnecdote,
   };
 };
 
