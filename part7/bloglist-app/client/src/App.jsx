@@ -203,6 +203,8 @@ const App = () => {
         />
 
         <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+
+        <Route path="*" element={<h1>404 - Page not found</h1>} />
       </Routes>
     </Container>
   );
