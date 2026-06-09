@@ -8,6 +8,7 @@ import loginService from "./services/login";
 import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
+import ErrorBoundary from "./components/ErrorBoundary";
 import {
   Container,
   AppBar,
@@ -167,11 +168,13 @@ const App = () => {
         <Route
           path="/"
           element={
-            <BlogList
-              blogs={blogs}
-              updateBlog={updateBlog}
-              deleteBlog={deleteBlog}
-            />
+            <ErrorBoundary>
+              <BlogList
+                blogs={blogs}
+                updateBlog={updateBlog}
+                deleteBlog={deleteBlog}
+              />
+            </ErrorBoundary>
           }
         />
 
