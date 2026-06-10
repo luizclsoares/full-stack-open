@@ -9,6 +9,7 @@ import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { useNotificationActions } from "./store";
 import {
   Container,
   AppBar,
@@ -23,12 +24,13 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState(null);
 
   const navigate = useNavigate();
 
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
+
+  const { notification, type } = useNotificationActions();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -59,10 +61,8 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setNotification({ text: "Wrong username or password", type: "error" });
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      notification("Wrong username or password");
+      type("error");
     }
   };
 
@@ -79,14 +79,8 @@ const App = () => {
 
       setBlogs(blogs.concat(newBlog));
       navigate("/");
-      setNotification({
-        text: `A new blog ${newBlog.title} by ${newBlog.author} added.`,
-        type: "success",
-      });
-
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      notification(`A new blog ${newBlog.title} by ${newBlog.author} added.`);
+      type("success");
     } catch (exception) {
       console.log("error");
     }

@@ -1,16 +1,17 @@
 import { Alert } from "@mui/material";
+import { useNotificationMessage, useNotificationType } from "../store";
 
-const Notification = ({ notification }) => {
-  if (!notification) {
+const Notification = () => {
+  const message = useNotificationMessage();
+  const type = useNotificationType();
+
+  if (!message) {
     return null;
   }
 
   return (
-    <Alert
-      style={{ marginTop: 10, marginBottom: 10 }}
-      severity={notification.type}
-    >
-      {notification.text}
+    <Alert style={{ marginTop: 10, marginBottom: 10 }} severity={type}>
+      {message}
     </Alert>
   );
 };
