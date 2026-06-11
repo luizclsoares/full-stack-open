@@ -1,4 +1,23 @@
 import { create } from "zustand";
+import blogService from "./services/blogs";
+
+const useBlogListStore = create((set) => ({
+  blogs: [],
+  actions: {
+    initialize: async () => {
+      const blogs = await blogService.getAll();
+      set(() => ({ blogs }));
+    },
+    add: async (blog, user) => {
+      const newBlog = await blogService.create(blog);
+      newBlog.user = user;
+
+      set((state) => ({ blogs: state.blogs.concat(newBlog) }));
+    },
+  },
+}));
+
+export default useBlogListStore;
 
 const useNotificationStore = create((set) => ({
   message: "",
@@ -18,6 +37,12 @@ const useNotificationStore = create((set) => ({
     },
   },
 }));
+
+export const useBlogList = () =>
+  useBlogListStore((state) => state.blogs.sort((a, b) => b.likes - a.likes));
+
+export const useBlogListActions = () =>
+  useBlogListStore((state) => state.actions);
 
 export const useNotificationMessage = () =>
   useNotificationStore((state) => state.message);

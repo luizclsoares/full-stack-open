@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { useNotificationActions } from "./store";
+import { useBlogList, useBlogListActions } from "./store";
 import {
   Container,
   AppBar,
@@ -20,23 +21,18 @@ import {
 } from "@mui/material";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
-  const match = useMatch("/blogs/:id");
-  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
-
   const { notification, type } = useNotificationActions();
+  const { initialize, add } = useBlogListActions();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes));
-    });
-  }, []);
+    initialize();
+  }, [initialize]);
 
   useEffect(() => {
     const userJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -70,20 +66,6 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogAppUser");
     setUser(null);
     navigate("/");
-  };
-
-  const addBlog = async (blog) => {
-    try {
-      const newBlog = await blogService.create(blog);
-      newBlog.user = user;
-
-      setBlogs(blogs.concat(newBlog));
-      navigate("/");
-      notification(`A new blog ${newBlog.title} by ${newBlog.author} added.`);
-      type("success");
-    } catch (exception) {
-      console.log("error");
-    }
   };
 
   const updateBlog = async (blog) => {
@@ -163,11 +145,7 @@ const App = () => {
           path="/"
           element={
             <ErrorBoundary>
-              <BlogList
-                blogs={blogs}
-                updateBlog={updateBlog}
-                deleteBlog={deleteBlog}
-              />
+              <BlogList updateBlog={updateBlog} deleteBlog={deleteBlog} />
             </ErrorBoundary>
           }
         />
@@ -187,16 +165,10 @@ const App = () => {
 
         <Route
           path="/blogs/:id"
-          element={
-            <Blog
-              blog={blog}
-              handleLikes={updateBlog}
-              handleRemove={deleteBlog}
-            />
-          }
+          element={<Blog handleLikes={updateBlog} handleRemove={deleteBlog} />}
         />
 
-        <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+        <Route path="/create" element={<BlogForm />} />
 
         <Route path="*" element={<h1>404 - Page not found</h1>} />
       </Routes>

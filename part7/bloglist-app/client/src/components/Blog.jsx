@@ -7,8 +7,15 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import { useMatch } from "react-router-dom";
+import { useBlogList } from "../store";
 
-const Blog = ({ blog, handleLikes, handleRemove }) => {
+const Blog = ({ handleLikes, handleRemove }) => {
+  const blogs = useBlogList();
+
+  const match = useMatch("/blogs/:id");
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
+
   const updateBlog = () => {
     const copyBlog = { ...blog };
     copyBlog.likes += 1;

@@ -1,7 +1,10 @@
 import Blog from "./Blog";
 import { Link } from "react-router-dom";
+import { useBlogList } from "../store";
 
-const BlogList = ({ blogs, updateBlog, deleteBlog }) => {
+const BlogList = ({ updateBlog, deleteBlog }) => {
+  const blogs = useBlogList();
+
   return (
     <div>
       <h2>Blogs</h2>

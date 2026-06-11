@@ -1,19 +1,30 @@
 import { useState } from "react";
 import { TextField, Button } from "@mui/material";
+import { useBlogListActions, useNotificationActions } from "../store";
+import { useNavigate } from "react-router-dom";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const addBlog = (e) => {
+  const { add } = useBlogListActions();
+  const { notification, type } = useNotificationActions();
+
+  const navigate = useNavigate();
+
+  const addBlog = async (e) => {
     e.preventDefault();
 
-    createBlog({
-      title,
-      author,
-      url,
-    });
+    try {
+      await add({ title, author, url });
+
+      navigate("/");
+      notification(`A new blog ${title} by ${author} added.`);
+      type("success");
+    } catch (exception) {
+      console.log("error");
+    }
 
     setTitle("");
     setAuthor("");
