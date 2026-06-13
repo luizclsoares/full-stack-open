@@ -8,23 +8,38 @@ import {
   Button,
 } from "@mui/material";
 import { useMatch } from "react-router-dom";
-import { useBlogList } from "../store";
+import { useBlogList, useBlogListActions } from "../store";
+import { useNavigate } from "react-router-dom";
 
-const Blog = ({ handleLikes, handleRemove }) => {
+const Blog = () => {
   const blogs = useBlogList();
+  const { update, remove } = useBlogListActions();
 
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
-  const updateBlog = () => {
+  const navigate = useNavigate();
+
+  const updateBlog = async () => {
     const copyBlog = { ...blog };
     copyBlog.likes += 1;
 
-    handleLikes(copyBlog);
+    await update(copyBlog);
   };
 
-  const removeBlog = () => {
-    handleRemove(blog);
+  const removeBlog = async () => {
+    const confirm = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author} ?`,
+    );
+
+    if (confirm) {
+      try {
+        await remove(blog.id);
+        navigate("/");
+      } catch (exception) {
+        console.log("error");
+      }
+    }
   };
 
   if (!blog) {

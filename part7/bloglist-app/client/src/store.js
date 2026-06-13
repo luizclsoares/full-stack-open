@@ -14,6 +14,19 @@ const useBlogListStore = create((set) => ({
 
       set((state) => ({ blogs: state.blogs.concat(newBlog) }));
     },
+    update: async (blog) => {
+      const updatedBlog = await blogService.update(blog);
+      updatedBlog.user = blog.user;
+
+      set((state) => ({
+        blogs: state.blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)),
+      }));
+    },
+    remove: async (id) => {
+      await blogService.remove(id);
+
+      set((state) => ({ blogs: state.blogs.filter((b) => b.id !== id) }));
+    },
   },
 }));
 
@@ -24,13 +37,13 @@ const useNotificationStore = create((set) => ({
   type: "",
   actions: {
     notification: (msg) => {
-      set((state) => ({ message: (state.message = msg) }));
+      set((state) => ({ message: msg }));
       setTimeout(() => {
         set((state) => ({ message: (state.message = "") }));
       }, 5000);
     },
     type: (type) => {
-      set((state) => ({ type: (state.type = type) }));
+      set((state) => ({ type }));
       setTimeout(() => {
         set((state) => ({ type: (state.type = "") }));
       }, 5000);

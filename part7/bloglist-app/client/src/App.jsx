@@ -68,33 +68,6 @@ const App = () => {
     navigate("/");
   };
 
-  const updateBlog = async (blog) => {
-    try {
-      const updatedBlog = await blogService.update(blog);
-      updatedBlog.user = blog.user;
-
-      setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)));
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-
-  const deleteBlog = async (blog) => {
-    const confirm = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author} ?`,
-    );
-
-    if (confirm) {
-      try {
-        await blogService.remove(blog.id);
-        navigate("/");
-        setBlogs(blogs.filter((b) => b.id !== blog.id));
-      } catch (err) {
-        console.log(err.message);
-      }
-    }
-  };
-
   const style = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
 
   return (
@@ -145,7 +118,7 @@ const App = () => {
           path="/"
           element={
             <ErrorBoundary>
-              <BlogList updateBlog={updateBlog} deleteBlog={deleteBlog} />
+              <BlogList />
             </ErrorBoundary>
           }
         />
@@ -163,10 +136,7 @@ const App = () => {
           }
         />
 
-        <Route
-          path="/blogs/:id"
-          element={<Blog handleLikes={updateBlog} handleRemove={deleteBlog} />}
-        />
+        <Route path="/blogs/:id" element={<Blog />} />
 
         <Route path="/create" element={<BlogForm />} />
 
