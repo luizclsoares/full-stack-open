@@ -1,13 +1,32 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { TextField, Button } from "@mui/material";
+import { useLogin, useLoginActions, useNotificationActions } from "../store";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = ({
-  handleLogin,
-  username,
-  handleUsername,
-  password,
-  handlePassword,
-}) => {
+const LoginForm = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { login } = useLoginActions();
+  const { notification, type } = useNotificationActions();
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      await login(username, password);
+      navigate("/");
+      setUsername("");
+      setPassword("");
+    } catch (exception) {
+      notification("Wrong username or password");
+      type("error");
+    }
+  };
+
   return (
     <>
       <h2>Log in to application</h2>
@@ -16,7 +35,7 @@ const LoginForm = ({
           <TextField
             label="Username"
             value={username}
-            onChange={({ target }) => handleUsername(target.value)}
+            onChange={({ target }) => setUsername(target.value)}
             fullWidth
           />
         </div>
@@ -25,7 +44,7 @@ const LoginForm = ({
             type="password"
             label="Password"
             value={password}
-            onChange={({ target }) => handlePassword(target.value)}
+            onChange={({ target }) => setPassword(target.value)}
             fullWidth
             style={{ marginTop: "15px" }}
           />
@@ -45,12 +64,12 @@ const LoginForm = ({
   );
 };
 
-LoginForm.propTypes = {
-  handleLogin: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  handleUsername: PropTypes.func.isRequired,
-  password: PropTypes.string.isRequired,
-  handlePassword: PropTypes.func.isRequired,
-};
+// LoginForm.propTypes = {
+//   handleLogin: PropTypes.func.isRequired,
+//   username: PropTypes.string.isRequired,
+//   handleUsername: PropTypes.func.isRequired,
+//   password: PropTypes.string.isRequired,
+//   handlePassword: PropTypes.func.isRequired,
+// };
 
 export default LoginForm;

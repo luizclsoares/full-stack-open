@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import blogService from "./services/blogs";
+import loginService from "./services/login";
 
 const useBlogListStore = create((set) => ({
   blogs: [],
@@ -51,6 +52,32 @@ const useNotificationStore = create((set) => ({
   },
 }));
 
+const useLoginStore = create((set) => ({
+  user: null,
+  actions: {
+    login: async (username, password) => {
+      const user = await loginService.login({ username, password });
+
+      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
+      blogService.setToken(user.token);
+      set((state) => ({ user: user }));
+    },
+    logout: () => {
+      window.localStorage.removeItem("loggedBlogAppUser");
+      set((state) => ({ user: null }));
+    },
+    initialize: (user) => {
+      const userJSON = window.localStorage.getItem("loggedBlogAppUser");
+
+      if (userJSON) {
+        const user = JSON.parse(userJSON);
+        blogService.setToken(user.token);
+        set((state) => ({ user: user }));
+      }
+    },
+  },
+}));
+
 export const useBlogList = () =>
   useBlogListStore((state) => state.blogs.sort((a, b) => b.likes - a.likes));
 
@@ -65,3 +92,7 @@ export const useNotificationType = () =>
 
 export const useNotificationActions = () =>
   useNotificationStore((state) => state.actions);
+
+export const useLogin = () => useLoginStore((state) => state.user);
+
+export const useLoginActions = () => useLoginStore((state) => state.actions);

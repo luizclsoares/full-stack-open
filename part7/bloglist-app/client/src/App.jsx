@@ -9,8 +9,12 @@ import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { useNotificationActions } from "./store";
-import { useBlogList, useBlogListActions } from "./store";
+import {
+  useBlogList,
+  useBlogListActions,
+  useLoginActions,
+  useLogin,
+} from "./store";
 import {
   Container,
   AppBar,
@@ -21,50 +25,23 @@ import {
 } from "@mui/material";
 
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
 
-  const { notification, type } = useNotificationActions();
   const { initialize, add } = useBlogListActions();
+  const { initialize: loginInitialize, logout } = useLoginActions();
 
   useEffect(() => {
     initialize();
   }, [initialize]);
 
+  const user = useLogin();
+
   useEffect(() => {
-    const userJSON = window.localStorage.getItem("loggedBlogAppUser");
-
-    if (userJSON) {
-      const user = JSON.parse(userJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    try {
-      const user = await loginService.login({ username, password });
-
-      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      navigate("/");
-      setUser(user);
-      setUsername("");
-      setPassword("");
-    } catch (exception) {
-      notification("Wrong username or password");
-      type("error");
-    }
-  };
+    loginInitialize();
+  }, [loginInitialize]);
 
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedBlogAppUser");
-    setUser(null);
+    logout();
     navigate("/");
   };
 
@@ -111,7 +88,7 @@ const App = () => {
         </AppBar>
       </Box>
 
-      <Notification notification={notification} />
+      <Notification />
 
       <Routes>
         <Route
@@ -123,18 +100,7 @@ const App = () => {
           }
         />
 
-        <Route
-          path="/login"
-          element={
-            <LoginForm
-              handleLogin={handleLogin}
-              username={username}
-              handleUsername={setUsername}
-              password={password}
-              handlePassword={setPassword}
-            />
-          }
-        />
+        <Route path="/login" element={<LoginForm />} />
 
         <Route path="/blogs/:id" element={<Blog />} />
 
