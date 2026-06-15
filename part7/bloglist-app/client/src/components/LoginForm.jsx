@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import { TextField, Button } from "@mui/material";
 import { useLogin, useLoginActions, useNotificationActions } from "../store";
 import { useNavigate } from "react-router-dom";
+import useField from "../hooks/useField";
 
 const LoginForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const username = useField("text");
+  const password = useField("password");
 
   const { login } = useLoginActions();
   const { notification, type } = useNotificationActions();
@@ -17,10 +18,8 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      await login(username, password);
+      await login(username.value, password.value);
       navigate("/");
-      setUsername("");
-      setPassword("");
     } catch (exception) {
       notification("Wrong username or password");
       type("error");
@@ -32,19 +31,12 @@ const LoginForm = () => {
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          <TextField
-            label="Username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-            fullWidth
-          />
+          <TextField {...username} label="Username" fullWidth />
         </div>
         <div>
           <TextField
-            type="password"
+            {...password}
             label="Password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
             fullWidth
             style={{ marginTop: "15px" }}
           />
@@ -63,13 +55,5 @@ const LoginForm = () => {
     </>
   );
 };
-
-// LoginForm.propTypes = {
-//   handleLogin: PropTypes.func.isRequired,
-//   username: PropTypes.string.isRequired,
-//   handleUsername: PropTypes.func.isRequired,
-//   password: PropTypes.string.isRequired,
-//   handlePassword: PropTypes.func.isRequired,
-// };
 
 export default LoginForm;

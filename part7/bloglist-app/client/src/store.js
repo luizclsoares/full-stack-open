@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import persistentUser from "./services/persistentUser";
 
 const useBlogListStore = create((set) => ({
   blogs: [],
@@ -58,16 +59,16 @@ const useLoginStore = create((set) => ({
     login: async (username, password) => {
       const user = await loginService.login({ username, password });
 
-      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
+      persistentUser.saveUser(user);
       blogService.setToken(user.token);
       set((state) => ({ user: user }));
     },
     logout: () => {
-      window.localStorage.removeItem("loggedBlogAppUser");
+      persistentUser.removeUser();
       set((state) => ({ user: null }));
     },
     initialize: (user) => {
-      const userJSON = window.localStorage.getItem("loggedBlogAppUser");
+      const userJSON = persistentUser.getUser();
 
       if (userJSON) {
         const user = JSON.parse(userJSON);
