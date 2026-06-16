@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import usersService from "./services/users";
 import persistentUser from "./services/persistentUser";
 
 const useBlogListStore = create((set) => ({
@@ -79,6 +80,16 @@ const useLoginStore = create((set) => ({
   },
 }));
 
+const useUsersStore = create((set) => ({
+  users: [],
+  actions: {
+    initialize: async () => {
+      const users = await usersService.getAll();
+      set(() => ({ users }));
+    },
+  },
+}));
+
 export const useBlogList = () =>
   useBlogListStore((state) => state.blogs.sort((a, b) => b.likes - a.likes));
 
@@ -97,3 +108,7 @@ export const useNotificationActions = () =>
 export const useLogin = () => useLoginStore((state) => state.user);
 
 export const useLoginActions = () => useLoginStore((state) => state.actions);
+
+export const useUsers = () => useUsersStore((state) => state.users);
+
+export const useUsersActions = () => useUsersStore((state) => state.actions);

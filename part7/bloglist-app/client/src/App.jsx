@@ -3,11 +3,12 @@ import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
+import Blog from "./components/Blog";
+import Users from "./components/Users";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { Link, Routes, Route, useMatch } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Blog from "./components/Blog";
 import ErrorBoundary from "./components/ErrorBoundary";
 import {
   useBlogList,
@@ -60,6 +61,10 @@ const App = () => {
               Blogs
             </Button>
 
+            <Button color="inherit" component={Link} to="/users" sx={style}>
+              Users
+            </Button>
+
             {!user ? (
               <Button color="inherit" component={Link} to="/login" sx={style}>
                 Login
@@ -105,6 +110,8 @@ const App = () => {
         <Route path="/blogs/:id" element={<Blog />} />
 
         <Route path="/create" element={<BlogForm />} />
+
+        <Route path="/users" element={<Users />} />
 
         <Route path="*" element={<h1>404 - Page not found</h1>} />
       </Routes>
