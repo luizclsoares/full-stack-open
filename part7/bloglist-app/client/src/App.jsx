@@ -5,6 +5,7 @@ import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Blog from "./components/Blog";
 import Users from "./components/Users";
+import User from "./components/User";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { Link, Routes, Route, useMatch } from "react-router-dom";
@@ -112,6 +113,8 @@ const App = () => {
         <Route path="/create" element={<BlogForm />} />
 
         <Route path="/users" element={<Users />} />
+
+        <Route path="/users/:id" element={<User />} />
 
         <Route path="*" element={<h1>404 - Page not found</h1>} />
       </Routes>
